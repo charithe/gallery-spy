@@ -1,0 +1,49 @@
+#url-input-box {   
+    padding:10px;
+    margin:0 auto;
+    margin-bottom: 5px;
+    display:block;        
+}
+
+#url-input-form {
+    display:block;
+    width:80%;
+    margin:5px auto;
+}
+
+#gallery-url {
+    width:90%;
+}
+
+.gallery-thumbnails {    
+    display: block;
+    padding:5px;
+    margin:2% auto;    
+}
+
+.gallery-thumb {
+    display: block;
+    margin-bottom:15px;
+}
+
+.masonry, .masonry .masonry-brick {
+  -webkit-transition-duration: 0.7s;
+     -moz-transition-duration: 0.7s;
+       -o-transition-duration: 0.7s;
+          transition-duration: 0.7s;
+}
+
+.masonry {
+  -webkit-transition-property: height, width;
+     -moz-transition-property: height, width;
+       -o-transition-property: height, width;
+          transition-property: height, width;
+}
+
+.masonry .masonry-brick {
+  -webkit-transition-property: left, right, top;
+     -moz-transition-property: left, right, top;
+       -o-transition-property: left, right, top;
+          transition-property: left, right, top;
+}
+

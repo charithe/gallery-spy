@@ -1,0 +1,70 @@
+ <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Snatch Galleries Off the Web">
+    <meta name="author" content="Cell">      
+    <title>Gallery Spy</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">    
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="css/gallery-spy.css" rel="stylesheet">
+  </head>
+  <body>
+    <div>      
+      <div class="well" id="url-input-box">        
+      </div>
+      
+     
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div id="thumbnail-container" class="span12"></div>
+        </div>        
+      </div>
+    </div>
+    
+    <div id="progress-container"></div>
+    
+    
+    <!-- Templates -->    
+    <script type="text/template" id="url-box-template">
+      <form id="url-input-form">                    
+        <input type="text" id="gallery-url" placeholder="Gallery URL"/>
+        <input type="button" class="btn" id="go-button" value="Go"/>            
+      </form>
+    </script>
+     
+    <script type="text/template" id="gallery-template">
+      <div class="gallery-thumbnails"></div>
+    </script>
+    
+    <script type="text/template" id="thumbnail-template">
+        <a href="<%= src %>" class="thumbnail" target="_blank"></a>
+    </script>
+    
+    <script type="text/template" id="progress-dialog-template">
+        <div class="modal hide fade" id="progress-dialog">
+            <div class="modal-header">
+              <a class="close" data-dismiss="modal">×</a>
+              <h3>Loading...</h3>
+            </div>
+            <div class="modal-body">
+              <p><img src="img/loading.gif"/>&nbsp;&nbsp; Please wait while the images are loaded.</p>
+              <div class="progress progress-striped active">
+                <div class="bar" id="progress-bar" style="width:0%"></div>
+              </div>              
+            </div>    
+        </div>
+    </script>
+  
+    <!-- JavaScript -->
+    <script type="text/javascript" src="js/libs/jquery/jquery-min.js"></script>
+    <script type="text/javascript" src="js/libs/jquery/jquery.masonry-min.js"></script>
+    <script type="text/javascript" src="js/libs/underscore/underscore-min.js"></script>
+    <script type="text/javascript" src="js/libs/underscore/underscore.string-min.js"></script>
+    <script type="text/javascript" src="js/libs/backbone/backbone-min.js"></script>
+    <script type="text/javascript" src="js/libs/bootstrap/bootstrap-modal.js"></script>    
+    <script type="text/javascript" src="js/gallery-spy.js"></script>
+    
+  </body>
+  </html>
