@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Snatch Galleries Off the Web">
+    <meta name="author" content="Cell">      
+    <title>Gallery Spy Spec Runner</title>
+    <link rel="stylesheet" type="text/css" href="css/jasmine.css">
+    <script type="text/javascript" src="js/libs/jasmine/jasmine.js"></script>
+    <script type="text/javascript" src="js/libs/jasmine/jasmine-html.js"></script>
+    
+    <script type="text/javascript" src="js/libs/underscore/underscore-min.js"></script>
+    <script type="text/javascript" src="js/libs/underscore/underscore.string-min.js"></script>
+   
+    <!-- include source files here... -->
+    <script type="text/javascript" src="js/app/url-parser.js"></script>
+    <script type="text/javascript" src="js/app/util.js"></script>  
+  
+    <!-- include spec files here... -->
+    <script type="text/javascript" src="js/tests/url-parser-spec.js"></script>  
+  
+    <script type="text/javascript">          
+      (function() {
+        var jasmineEnv = jasmine.getEnv();
+        jasmineEnv.updateInterval = 1000;
+  
+        var htmlReporter = new jasmine.HtmlReporter();
+  
+        jasmineEnv.addReporter(htmlReporter);
+  
+        jasmineEnv.specFilter = function(spec) {
+          return htmlReporter.specFilter(spec);
+        };
+  
+        var currentWindowOnload = window.onload;
+  
+        window.onload = function() {
+          if (currentWindowOnload) {
+            currentWindowOnload();
+          }
+          execJasmine();
+        };
+  
+        function execJasmine() {
+          jasmineEnv.execute();
+        }
+  
+      })();
+    </script>
+  </head>
+  <body        
+  </body>
+  </html>
