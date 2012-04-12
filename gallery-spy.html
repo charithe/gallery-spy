@@ -11,12 +11,14 @@
     <link href="css/gallery-spy.css" rel="stylesheet">
   </head>
   <body>
-    <div>      
-      <div class="well" id="url-input-box">        
-      </div>
-      
+    <div>
+      <div id="top-bar">
+        <div class="well" id="url-input-box">
+          <div id="url-controls-box"></div>
+        </div>        
+      </div>      
      
-      <div class="container-fluid">
+      <div class="container-fluid" id="gallery-area">
         <div class="row-fluid">
           <div id="thumbnail-container" class="span12"></div>
         </div>        
@@ -43,18 +45,29 @@
     </script>
     
     <script type="text/template" id="progress-dialog-template">
-        <div class="modal hide fade" id="progress-dialog">
-            <div class="modal-header">
-              <a class="close" data-dismiss="modal">×</a>
-              <h3>Loading...</h3>
-            </div>
-            <div class="modal-body">
-              <p><img src="img/loading.gif"/>&nbsp;&nbsp; Please wait while the images are loaded.</p>
-              <div class="progress progress-striped active">
-                <div class="bar" id="progress-bar" style="width:0%"></div>
-              </div>              
-            </div>    
-        </div>
+      <div class="modal hide fade" id="progress-dialog">
+          <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Loading...</h3>
+          </div>
+          <div class="modal-body">
+            <p><img src="img/loading.gif"/>&nbsp;&nbsp; Please wait while the images are loaded.</p>
+            <div class="progress progress-striped active">
+              <div class="bar" id="progress-bar" style="width:0%"></div>
+            </div>              
+          </div>    
+      </div>
+    </script>
+    
+    <script type="text/template" id="url-control-template">
+      <div class="url-controls">
+          <% for(var i = 0; i < controlHTML.length; i+=2){ %>
+              <%= controlHTML[i] %>
+              <% if((i+1) < controlHTML.length){ %>
+              <input type="number" value="<%= controlHTML[i+1] %>" class="url-control-input" data-index="<%= i/2 %>"/>
+              <% } %>
+          <% } %>
+      </div>
     </script>
   
     <!-- JavaScript -->

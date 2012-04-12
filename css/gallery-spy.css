@@ -1,3 +1,17 @@
+#top-bar {
+    display: block;
+    width:100%;
+    min-height: 5%;
+    position: fixed;
+    top:0;
+    z-index: 100;
+    margin-bottom: 10px;
+}
+
+#gallery-area {
+    margin:5% auto;
+}
+
 #url-input-box {   
     padding:10px;
     margin:0 auto;
@@ -16,9 +30,7 @@
 }
 
 #thumbnail-container {
-    display:block;
-    height: 100%;
-    overflow: auto;
+    display:block;        
 }
 
 .gallery-thumbnails {    
@@ -51,5 +63,16 @@
      -moz-transition-property: left, right, top;
        -o-transition-property: left, right, top;
           transition-property: left, right, top;
+}
+
+.url-controls {    
+    display:block;       
+    margin: 3px auto;
+    text-align: center;
+    font-size: large;
+}
+
+.url-control-input {
+    width:4em;
 }
 

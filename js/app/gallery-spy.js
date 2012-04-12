@@ -7,29 +7,84 @@ gallerySpy.classes = gallerySpy.classes || {};
 
 
 /** #################### Models #################### **/
+gallerySpy.models.URLControls = Backbone.Model.extend({
+    defaults: {
+        parsedURL : null,
+        controlHTML : null,
+        urlComponents : null,
+        imageRange : null
+    },
+    
+    initialize: function(){
+        var parsedURL = this.get("parsedURL");
+        var numRanges = parsedURL.ranges.length;
+        var imageRange = parsedURL.ranges[numRanges - 1];
+        var urlComponents = new Array(numRanges - 1);
+        var controlHTML = [];
+        
+        var url = parsedURL.tokenizedURL;
+        var sliceIndex = 0;
+        for(var i = 0; i < numRanges -1; i++){
+            urlComponents[i] = parsedURL.ranges[i].from;
+            
+            var endIndex = url.indexOf(parsedURL.ranges[i].patternKey);
+            controlHTML.push(url.slice(sliceIndex, endIndex));            
+            controlHTML.push(parsedURL.ranges[i].from);
+            sliceIndex = endIndex + parsedURL.ranges[i].patternKey.length;
+        }
+        
+        controlHTML.push(url.slice(sliceIndex).replace(imageRange.patternKey,"[" + imageRange.from + "-" + imageRange.to + "]"));
+        
+        this.set({
+           "imageRange": imageRange,
+           "urlComponents" : urlComponents,
+           "controlHTML": controlHTML
+        });        
+    },
+    
+    setURLComponentValue : function(index,value){
+        var urlComponents = this.get("urlComponents");
+        urlComponents[index] = value;
+        this.set({"urlComponents" : urlComponents});
+    },
+    
+    
+    getGallery: function(){
+        var parsedURL = this.get("parsedURL");
+        var urlComponents = this.get("urlComponents");
+        var imageRange = this.get("imageRange");
+        
+        var url = parsedURL.tokenizedURL;
+        for(var i = 0; i < parsedURL.ranges.length - 1; i++){
+            url = parsedURL.ranges[i].format(url,urlComponents[i]);
+        }
+        
+        
+        var gallery = new gallerySpy.collections.Gallery();
+        for(var i = imageRange.from; i < imageRange.to; i++){            
+            gallery.add(new gallerySpy.models.ThumbnailImage({"src":imageRange.format(url,i)}))
+        }
+        
+        return gallery;        
+    }
+    
+});
+
+
 gallerySpy.models.ThumbnailImage = Backbone.Model.extend({
     defaults: {
-        src: null,
-        selected: false,
+        src: null,        
         loaded: false,
         thumbnailWidth: null,
         thumbnailHeight: null,
         width: 0,
         height: 0,
         image: null
-    },
-    
-    initialize: function(){
-        this.bind("change:thumbnailHeight",function(){gallerySpy.classes.Util.log("Thumb:" + this.get("thumbnailHeight"));});  
-    },
-    
-    toggleSelect: function(){
-        this.set({selected: !this.get("selected")});
-    },
+    },       
     
     load: function(loadedCallback){        
         if(!this.get("loaded")){
-            gallerySpy.classes.Util.log("Loading..." + this.get("src"));            
+            gallerySpy.classes.Util.log("Loading " + this.get("src"));            
             var imgEl = new Image();
             
             imgEl.onload = _.bind(this.imageLoadCallback,this,imgEl,loadedCallback);
@@ -113,9 +168,81 @@ gallerySpy.views.URLBox = Backbone.View.extend({
    
    loadGallery: function(event){
         var url = $('#gallery-url').val();        
-        var galleryView = new gallerySpy.views.Gallery({"collection": gallerySpy.classes.GallerySpy.loadGallery(url)});
-        galleryView.render();
+       
+        var parsedURL = gallerySpy.classes.URLParser.parse(url);
+        gallerySpy.classes.Util.log(parsedURL);
+        var urlModel =  new gallerySpy.models.URLControls({"parsedURL": parsedURL});
+        var controlView = new gallerySpy.views.URLControls({"model": urlModel});
+        controlView.render();
+                
+        $(this.el).append(controlView.el);
+      
    }
+});
+
+
+gallerySpy.views.URLControls = Backbone.View.extend({
+    tagName: 'div',
+    
+    className: 'url-controls',
+    
+    events: {        
+        "input .url-control-input": "spinboxClicked",
+        "keypress .url-control-input": "keyPressed"
+    },
+    
+    initialize: function(){
+        var callback = _.bind(this.renderGallery, this);
+        this.model.bind("change:urlComponents",callback);
+    },
+    
+    render: function(){
+        gallerySpy.classes.Util.log("Rendering URL controls");
+        $("." + this.className).remove();
+        var template = _.template($('#url-control-template').html(),{"controlHTML" : this.model.get("controlHTML")});
+        this.$el.html(template);
+        
+        this.renderGallery();
+    },
+    
+    spinboxClicked: function(event){
+        event.stopPropagation();
+        var index = parseInt($(event.currentTarget).attr("data-index"));
+        var value = parseInt($(event.currentTarget).val());
+        
+        this.model.setURLComponentValue(index,value);        
+        this.renderGallery();
+    },
+    
+    keyPressed: function(event){
+        event.stopPropagation();        
+        var index = parseInt($(event.currentTarget).attr("data-index"));
+        var value = parseInt($(event.currentTarget).val());
+        
+        switch(event.keyCode){
+            case 13:
+                this.model.setURLComponentValue(index,value);
+                this.renderGallery();
+                break;
+            case 37:
+            case 40:
+                $(event.currentTarget).val(value-1);
+                this.model.setURLComponentValue(index,value-1);
+                this.renderGallery();
+                break;
+            case 38:
+            case 39:
+                $(event.currentTarget).val(value+1);
+                this.model.setURLComponentValue(index,value+1);
+                this.renderGallery();
+                break;
+        }        
+    },    
+    
+    renderGallery: function(){
+        var galleryView = new gallerySpy.views.Gallery({"collection": this.model.getGallery()});
+        galleryView.render();
+    }
 });
 
 
@@ -249,19 +376,10 @@ gallerySpy.views.ProgressDialog = Backbone.View.extend({
 /** #################### Control Classes #################### **/
 
 gallerySpy.classes.GallerySpy = function(){      
-    function loadGallery(url){
-        var gallery = new gallerySpy.collections.Gallery();
-        var parsedURL = gallerySpy.classes.URLParser.parse(url);      
+    function loadGallery(url){        
+        var parsedURL = gallerySpy.classes.URLParser.parse(url);        
+        return new gallerySpy.Models.URLControls({"parsedURL": parsedURL});
       
-        if(parsedURL != null){        
-            for(i = parsedURL.start; i <= parsedURL.end; i++){
-                var imageUrl = parsedURL.format(i);
-                gallerySpy.classes.Util.log(imageUrl);
-                gallery.add(new gallerySpy.models.ThumbnailImage({"src":imageUrl}));
-            }        
-        }
-      
-        return gallery;
     }
     
     return {
