@@ -24,7 +24,7 @@ For every range defined in the URL except the last, GallerySpy will render a tex
 * [Underscore](http://documentcloud.github.com/underscore/)
 * [jQuery](http://jquery.com/)
 * [jQuery Masonry](http://masonry.desandro.com/)
-* [Jasmine](http://pivotal.github.com/jasmine/)
+* [Jasmine](https://jasmine.github.io/)
 * [RequireJS](http://requirejs.org/)
 * [Bootstrap](http://twitter.github.com/bootstrap/)
 
